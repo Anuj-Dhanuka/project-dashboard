@@ -1,6 +1,16 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import {
+  FaTextHeight,
+  FaImage,
+  FaVideo,
+  FaTable,
+  FaDollarSign,
+  FaQuoteRight,
+  FaListAlt,
+  FaFileAlt,
+} from "react-icons/fa";
 
 import {
   defaultProposalId,
@@ -16,9 +26,24 @@ import WorkscopeCustomization from "./components/WorkscopeCustomization.js";
 import AgreementCustomization from "./components/AgreementCustomization.js";
 import NextStepsCustomization from "./components/NextStepsCustomization.js";
 import ThankYouAndServicesCustomization from "./components/ThankYouAndServicesCustomization.js";
+import DragableItems from "./components/DragableItems/index.js";
 
 const CpRightSideBar = () => {
   const dispatch = useDispatch();
+
+  const [activeTab, setActiveTab] = useState("styles"); // Managing tab switching
+  const [dragableItems, setDraggableItems] = useState([
+    { id: 1, icon: <FaTextHeight size={20} />, label: "Text" },
+    { id: 2, icon: <FaImage size={20} />, label: "Image" },
+    { id: 3, icon: <FaVideo size={20} />, label: "Video" },
+    { id: 4, icon: <FaTable size={20} />, label: "Table" },
+    { id: 5, icon: <FaDollarSign size={20} />, label: "Pricing Table" },
+    { id: 6, icon: <FaQuoteRight size={20} />, label: "Quote Builder" },
+    { id: 7, icon: <FaListAlt size={20} />, label: "Table of Contents" },
+    { id: 8, icon: <FaFileAlt size={20} />, label: "Page Break" },
+    { id: 9, icon: <FaTextHeight size={20} />, label: "Input" },
+    { id: 10, icon: <FaTextHeight size={20} />, label: "Check box" },
+  ]);
 
   const activeSection = useSelector(
     (state) => state.customizeContainer.customizeActiveSection
@@ -27,7 +52,6 @@ const CpRightSideBar = () => {
     (state) => state.createProposals.proposals[defaultProposalId]?.logoImage
   );
   const rightSidebarRef = useRef(null);
-
 
   const handleLogoChange = (event) => {
     const file = event.target.files[0];
@@ -43,10 +67,23 @@ const CpRightSideBar = () => {
     }
   };
 
-  return (
-    <RightSidebarWrapper ref={rightSidebarRef}>
-      <SidebarTitle>Proposal Designer</SidebarTitle>
+  const renderBlocksTab = () => (
+    <BlockOptionsContainer>
+      <>
+        {dragableItems.map((block) => (
+          <DragableItems
+            key={block.id}
+            id={block.id}
+            icon={block.icon}
+            label={block.label}
+          />
+        ))}
+      </>
+    </BlockOptionsContainer>
+  );
 
+  const renderStylesTab = () => (
+    <>
       <SectionTitle>Logo</SectionTitle>
       <InputContainer>
         {logoImage && <LogoPreview src={logoImage} alt="Logo Preview" />}
@@ -61,9 +98,10 @@ const CpRightSideBar = () => {
       </InputContainer>
 
       {activeSection === createProposalsSectionIds.COVER && (
-        <>
-        <CoverCustomization id={createProposalsSectionIds.COVER} rightSidebarRef={rightSidebarRef} />
-        </>
+        <CoverCustomization
+          id={createProposalsSectionIds.COVER}
+          rightSidebarRef={rightSidebarRef}
+        />
       )}
       {activeSection === createProposalsSectionIds.INTRODUCTION && (
         <IntroductionCustomization
@@ -89,6 +127,30 @@ const CpRightSideBar = () => {
           id={createProposalsSectionIds.THANKYOUANDSERVICES}
         />
       )}
+    </>
+  );
+
+  return (
+    <RightSidebarWrapper ref={rightSidebarRef}>
+      <SidebarTitle>Proposal Designer</SidebarTitle>
+
+      {/* Tab Navigation */}
+      <TabContainer>
+        <TabText
+          active={activeTab === "styles"}
+          onClick={() => setActiveTab("styles")}
+        >
+          Styles
+        </TabText>
+        <TabText
+          active={activeTab === "blocks"}
+          onClick={() => setActiveTab("blocks")}
+        >
+          Blocks
+        </TabText>
+      </TabContainer>
+
+      {activeTab === "styles" ? renderStylesTab() : renderBlocksTab()}
     </RightSidebarWrapper>
   );
 };
@@ -101,7 +163,7 @@ const RightSidebarWrapper = styled.div`
   padding: 30px 20px;
   background: linear-gradient(to bottom, #f9f9f9, #ffffff);
   box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  width: 320px;
   border-left: 1px solid #e0e0e0;
   min-height: 100vh;
   max-height: 100vh;
@@ -112,7 +174,6 @@ const RightSidebarWrapper = styled.div`
   }
   scrollbar-width: none;
 `;
-
 
 const SidebarTitle = styled.h3`
   font-size: 24px;
@@ -135,7 +196,6 @@ const SidebarTitle = styled.h3`
     background-color: #4a90e2;
     transition: width 0.4s ease, left 0.4s ease;
   }
-
 `;
 
 const SectionTitle = styled.h4`
@@ -181,6 +241,38 @@ const LogoPreview = styled.img`
   &:hover {
     transform: scale(1.05);
   }
+`;
+
+const TabContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+`;
+
+const TabText = styled.span`
+  font-size: 18px;
+  padding-bottom: 5px;
+  cursor: pointer;
+  border-bottom: 2px solid
+    ${(props) => (props.active ? "#4a90e2" : "transparent")};
+  color: ${(props) => (props.active ? "#4a90e2" : "#333")};
+  transition: border-bottom 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    color: #4a90e2;
+  }
+`;
+
+const BlockOptionsContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  background-color: red;
+  max-height: 100vh;
+  overflow-y: auto;
+  gap: 16px;
 `;
 
 export default CpRightSideBar;
