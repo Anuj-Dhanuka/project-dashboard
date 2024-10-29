@@ -1,16 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import {
-  FaTextHeight,
-  FaImage,
-  FaVideo,
-  FaTable,
-  FaDollarSign,
-  FaQuoteRight,
-  FaListAlt,
-  FaFileAlt,
-} from "react-icons/fa";
 
 import {
   defaultProposalId,
@@ -26,24 +16,13 @@ import WorkscopeCustomization from "./components/WorkscopeCustomization.js";
 import AgreementCustomization from "./components/AgreementCustomization.js";
 import NextStepsCustomization from "./components/NextStepsCustomization.js";
 import ThankYouAndServicesCustomization from "./components/ThankYouAndServicesCustomization.js";
-import DragableItems from "./components/DragableItems/index.js";
+
+import DraggableArea from "./components/DraggableArea/index.js";
 
 const CpRightSideBar = () => {
   const dispatch = useDispatch();
 
-  const [activeTab, setActiveTab] = useState("styles"); // Managing tab switching
-  const [dragableItems, setDraggableItems] = useState([
-    { id: 1, icon: <FaTextHeight size={20} />, label: "Text" },
-    { id: 2, icon: <FaImage size={20} />, label: "Image" },
-    { id: 3, icon: <FaVideo size={20} />, label: "Video" },
-    { id: 4, icon: <FaTable size={20} />, label: "Table" },
-    { id: 5, icon: <FaDollarSign size={20} />, label: "Pricing Table" },
-    { id: 6, icon: <FaQuoteRight size={20} />, label: "Quote Builder" },
-    { id: 7, icon: <FaListAlt size={20} />, label: "Table of Contents" },
-    { id: 8, icon: <FaFileAlt size={20} />, label: "Page Break" },
-    { id: 9, icon: <FaTextHeight size={20} />, label: "Input" },
-    { id: 10, icon: <FaTextHeight size={20} />, label: "Check box" },
-  ]);
+  const [activeTab, setActiveTab] = useState("styles");
 
   const activeSection = useSelector(
     (state) => state.customizeContainer.customizeActiveSection
@@ -66,21 +45,6 @@ const CpRightSideBar = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  const renderBlocksTab = () => (
-    <BlockOptionsContainer>
-      <>
-        {dragableItems.map((block) => (
-          <DragableItems
-            key={block.id}
-            id={block.id}
-            icon={block.icon}
-            label={block.label}
-          />
-        ))}
-      </>
-    </BlockOptionsContainer>
-  );
 
   const renderStylesTab = () => (
     <>
@@ -150,7 +114,7 @@ const CpRightSideBar = () => {
         </TabText>
       </TabContainer>
 
-      {activeTab === "styles" ? renderStylesTab() : renderBlocksTab()}
+      {activeTab === "styles" ? renderStylesTab() : <DraggableArea />}
     </RightSidebarWrapper>
   );
 };
@@ -261,18 +225,6 @@ const TabText = styled.span`
   &:hover {
     color: #4a90e2;
   }
-`;
-
-const BlockOptionsContainer = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-content: flex-start;
-  flex-wrap: wrap;
-  padding-top: 20px;
-  background-color: red;
-  max-height: 100vh;
-  overflow-y: auto;
-  gap: 16px;
 `;
 
 export default CpRightSideBar;

@@ -1,3 +1,5 @@
+import { useDraggable } from "@dnd-kit/core";
+
 export const saveCaretPosition = (el) => {
   const selection = window.getSelection();
   const range = selection.getRangeAt(0);
@@ -64,3 +66,62 @@ export const getContrastBackground = (hexColor) => {
   // Return black background for light text colors, white for dark text colors
   return luminance > 186 ? "#333366" : "#FFFFFF";
 };
+
+export function DraggableInputField({ id, placeholder }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+  const style = {
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    padding: '8px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    cursor: 'grab',
+    marginBottom: '8px',
+    backgroundColor: 'white',
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      <input type="text" placeholder={placeholder} />
+    </div>
+  );
+}
+
+export function DraggableTextArea({ id, placeholder }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+  const style = {
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    padding: '8px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    cursor: 'grab',
+    marginBottom: '8px',
+    backgroundColor: 'white',
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      <textarea placeholder={placeholder} rows="3" style={{ width: '100%' }} />
+    </div>
+  );
+}
+
+export function DraggableCheckbox({ id, label }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+  const style = {
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    padding: '8px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    cursor: 'grab',
+    marginBottom: '8px',
+    backgroundColor: 'white',
+    display: 'flex',
+    alignItems: 'center',
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      <input type="checkbox" />
+      <label style={{ marginLeft: '8px' }}>{label}</label>
+    </div>
+  );
+}
